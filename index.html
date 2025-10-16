@@ -40,6 +40,7 @@
 
   <script>
     const promptPrefix = `Can you organize the following unstructured patient information into this structured format?
+(Remember: Do NOT use abbreviations or synonyms. Always expand to full names.)
 
 Chief Complaint
 Condition 1: (Right/Left) breast lump for XXX (how long)
@@ -48,22 +49,22 @@ Condition 2: (Right/Left) breast microcalcification found on screening mammograp
 Present Illness
 There is a XX-year-old woman with a history of:
 # Diagnosis 1 (Cancer 1)
-- status post ….(surgery) on XXXX/XX/XX
-- status post ….(systemic therapy) on XXXX/XX/XX
+- Status post ….(surgery) on XXXX/XX/XX
+- Status post ….(systemic therapy) on XXXX/XX/XX
 ## Restaging shows TxNxMx on XXXX/XX/XX
-- status post ….(surgery) on XXXX/XX/XX
-- status post ….(systemic therapy) on XXXX/XX/XX
+- Status post ….(surgery) on XXXX/XX/XX
+- Status post ….(systemic therapy) on XXXX/XX/XX
 
 # Diagnosis 2 (Cancer 2)
-- status post ….(surgery) on XXXX/XX/XX
-- status post ….(systemic therapy) on XXXX/XX/XX
+- Status post ….(surgery) on XXXX/XX/XX
+- Status post ….(systemic therapy) on XXXX/XX/XX
 ## Restaging shows TxNxMx on XXXX/XX/XX
-- status post ….(surgery) on XXXX/XX/XX
-- status post ….(systemic therapy) on XXXX/XX/XX
+- Status post ….(surgery) on XXXX/XX/XX
+- Status post ….(systemic therapy) on XXXX/XX/XX
 
 —---Underlying—--
-# Chronic disease 1 (ex., DM, HTN) …
-# Chronic disease 2 (ex., DM, HTN) …
+# Chronic disease 1 (e.g., Diabetes Mellitus, Hypertension) …
+# Chronic disease 2 (e.g., Diabetes Mellitus, Hypertension) …
 
 (main paragraph)
 She first notices there is a (Left/Right) breast lump on XXXX/XX/XX, then first seeks medical assistance at XXXXX. Then, she received a serial examination, including XXX, XXX, which showed XXX, XXX results respectively.
@@ -71,23 +72,26 @@ She first notices there is a (Left/Right) breast lump on XXXX/XX/XX, then first 
 Based on the above examination result, we discussed the treatment plan with her, and she consented to XXX. Therefore, she was admitted on XXXX/XX/XX for XXX on XXXX/XX/XX.
 
 Tentative Diagnosis
-# (Right/Left) Invasive carcinoma of no special type, grade 2, ER (estrogen receptor): positive (95%), PR (progesterone receptor): negative (0%), HER2 (human epidermal growth factor receptor 2): negative (score 0), luminal type xxx, TxNxMx, stage
+# (Right/Left) Invasive carcinoma of no special type, grade 2, Estrogen receptor: positive (95%), Progesterone receptor: negative (0%), Human epidermal growth factor receptor 2: negative (score 0), luminal type xxx, TxNxMx, stage
 
 Formatting rules:
-- Abbreviate "Right" and "Left" as "Rt" and "Lt".
-- Partial mastectomy = PM, Total mastectomy = TM, Modified Radical Mastectomy = MRM
-- “infraclavicular venous port implantation” = “Port-A”
-- “axillary lymph node” = “ALN”
-- “clip placement” = “clipping”
-- “axillary reverse mapping” = “ARM”
-- “vacuum-assisted PM” = “VABB”
+- No abbreviation allowed. Always expand into full names.
+- Example mappings:
+  - Right = Right (not Rt), Left = Left (not Lt)
+  - Partial mastectomy (not PM), Total mastectomy (not TM), Modified radical mastectomy (not MRM)
+  - Infraclavicular venous port implantation (not Port-A)
+  - Axillary lymph node (not ALN)
+  - Clip placement (not Clipping)
+  - Axillary reverse mapping (not ARM)
+  - Vacuum-assisted partial mastectomy (not VABB)
+  - BI-RADS must always be presented as “BI-RADS (Breast Imaging Reporting and Data System)”
 - If dose info like "80 mg/m²" is present, omit it.
 
 ---\n\n`;
 
     function extractAge(text) {
       const match = text.match(/(\d{2})\s*(y\/o|years? old)?/i);
-      if (match) return match[1] + " y/o";
+      if (match) return match[1] + " years old";
       return "";
     }
 
