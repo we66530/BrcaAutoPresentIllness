@@ -74,25 +74,26 @@ Based on the above examination result, we discussed the treatment plan with her,
 Tentative Diagnosis
 # (Right/Left) Invasive carcinoma of no special type, grade 2, Estrogen receptor: positive (95%), Progesterone receptor: negative (0%), Human epidermal growth factor receptor 2: negative (score 0), luminal type xxx, TxNxMx, stage
 
-Formatting rules:
+Special rule:
+- If the patient has NO cancer history, print:
+  "There is a XX-year-old woman with a history of:
+  # (no related past history)
+  —---Underlying—--
+  # (no underlying disease)"
 - No abbreviation allowed. Always expand into full names.
-- Example mappings:
-  - Right = Right (not Rt), Left = Left (not Lt)
-  - Partial mastectomy (not PM), Total mastectomy (not TM), Modified radical mastectomy (not MRM)
-  - Infraclavicular venous port implantation (not Port-A)
-  - Axillary lymph node (not ALN)
-  - Clip placement (not Clipping)
-  - Axillary reverse mapping (not ARM)
-  - Vacuum-assisted partial mastectomy (not VABB)
-  - BI-RADS must always be presented as “BI-RADS (Breast Imaging Reporting and Data System)”
-- If dose info like "80 mg/m²" is present, omit it.
-
 ---\n\n`;
 
     function extractAge(text) {
       const match = text.match(/(\d{2})\s*(y\/o|years? old)?/i);
       if (match) return match[1] + " years old";
       return "";
+    }
+
+    function ensureHistoryExists(summary, ageStr) {
+      if (!/Diagnosis|Chronic disease/i.test(summary)) {
+        return `There is a ${ageStr || "XX years old"} woman with a history of:\n# (no related past history)\n—---Underlying—--\n# (no underlying disease)`;
+      }
+      return summary;
     }
 
     document.getElementById("summarizeBtn").addEventListener("click", async () => {
@@ -128,7 +129,8 @@ Formatting rules:
         const data = await response.json();
 
         if (data.candidates && data.candidates.length > 0) {
-          const summary = data.candidates[0].content.parts[0].text;
+          let summary = data.candidates[0].content.parts[0].text;
+          summary = ensureHistoryExists(summary, ageStr);
           outputDiv.textContent = (ageStr ? ageStr + "\n" : "") + summary;
         } else {
           outputDiv.textContent = "No summary returned. Full response:\n" + JSON.stringify(data, null, 2);
