@@ -96,6 +96,26 @@ Special rule:
       return summary;
     }
 
+    function expandAbbreviations(text) {
+      const replacements = {
+        "\\bRt\\b": "Right",
+        "\\bLt\\b": "Left",
+        "\\bPM\\b": "Partial mastectomy",
+        "\\bTM\\b": "Total mastectomy",
+        "\\bMRM\\b": "Modified radical mastectomy",
+        "\\bPort-A\\b": "Infraclavicular venous port implantation",
+        "\\bALN\\b": "Axillary lymph node",
+        "\\bClipping\\b": "Clip placement",
+        "\\bARM\\b": "Axillary reverse mapping",
+        "\\bVABB\\b": "Vacuum-assisted partial mastectomy",
+        "\\bBI-RADS\\b": "BI-RADS (Breast Imaging Reporting and Data System)"
+      };
+      for (const [abbr, full] of Object.entries(replacements)) {
+        text = text.replace(new RegExp(abbr, "g"), full);
+      }
+      return text;
+    }
+
     document.getElementById("summarizeBtn").addEventListener("click", async () => {
       const apiKey = document.getElementById("apiKey").value.trim();
       const inputText = document.getElementById("inputText").value.trim();
@@ -131,6 +151,7 @@ Special rule:
         if (data.candidates && data.candidates.length > 0) {
           let summary = data.candidates[0].content.parts[0].text;
           summary = ensureHistoryExists(summary, ageStr);
+          summary = expandAbbreviations(summary); // enforce full names
           outputDiv.textContent = (ageStr ? ageStr + "\n" : "") + summary;
         } else {
           outputDiv.textContent = "No summary returned. Full response:\n" + JSON.stringify(data, null, 2);
